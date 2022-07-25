@@ -10,11 +10,19 @@
         <ion-card mode="ios">
           <img src="../assets/websiteQRCode_noFrame.png" />
         </ion-card>
-        <div style=" text-align: center;">
-          <ion-chip color="secondary" style="margin-right: 3rem;" @click="share">
-            <ion-icon icon="share-social" color="secondary" ></ion-icon>
-            <ion-label>Share</ion-label>
+        <div style="text-align: center">
+          <ion-chip color="secondary" @click="share">
+            <ion-icon icon="share-social" color="secondary"></ion-icon>
+            <ion-label>Share Capacitor</ion-label>
           </ion-chip>
+        </div>
+        <div style="text-align: center">
+          <ion-chip color="warning" @click="shareViaWebShare">
+            <ion-icon icon="share-social" color="warning"></ion-icon>
+            <ion-label>Web Share API</ion-label>
+          </ion-chip>
+        </div>
+        <div style="text-align: center">
           <ion-chip color="success" @click="save">
             <ion-icon icon="arrow-down" color="success"></ion-icon>
             <ion-label>Save</ion-label>
@@ -33,7 +41,6 @@ import {
   IonTitle,
   IonToolbar,
   IonList,
-  IonItem,
   IonLabel,
   IonCard,
   IonChip,
@@ -41,7 +48,7 @@ import {
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { Share } from "@capacitor/share";
-import { Filesystem, Directory } from "@capacitor/filesystem";
+
 /* tslint:disable no-var-requires */
 /* eslint @typescript-eslint/no-var-requires: "off" */
 const image = require("../assets/websiteQRCode_noFrame.png");
@@ -65,13 +72,24 @@ export default defineComponent({
       image,
     };
   },
+  computed: {
+    webShareApiSupported() {
+      return navigator.share;
+    },
+  },
   methods: {
     async share() {
-      await Share.share({
-        title: "Share This QR Code",
-        text: "This is a test of the Capacitor Share Plugin",
-        url: "https://capacitor.ionicframework.com",
-        dialogTitle: "Share Plugin",
+      Share.canShare().then((canShare) => {
+        if (canShare) {
+          Share.share({
+            title: "Save & Share Plugin",
+            text: "Save & Share Plugin",
+            url: "https://capacitor.ionicframework.com",
+            dialogTitle: "Save & Share Plugin",
+          });
+        } else {
+          alert("Share API not supported");
+        }
       });
     },
     save() {
@@ -79,6 +97,18 @@ export default defineComponent({
       downloadLink.href = image;
       downloadLink.download = "websiteQRCode_noFrame.png";
       downloadLink.click();
+    },
+    shareViaWebShare() {
+      let data = {
+          title: "Web Share API",
+          text: "Supported",
+          url: "URL to be shared",
+        }
+      if (navigator.canShare(data)) {
+        navigator.share(data)
+      } else {
+        alert("Not supported for this browser");
+      }
     },
   },
 });
