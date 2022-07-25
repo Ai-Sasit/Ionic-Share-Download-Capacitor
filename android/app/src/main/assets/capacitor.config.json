@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "share and save plugin",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}

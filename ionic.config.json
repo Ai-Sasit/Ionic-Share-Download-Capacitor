@@ -1,0 +1,7 @@
+{
+  "name": "share and save plugin",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
